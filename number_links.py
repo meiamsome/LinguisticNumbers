@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
-
-from functools import partial
-
 from linguistic_numbers import number_to_english, number_to_base, number_to_primes
 
 def find_fixpoints(func):

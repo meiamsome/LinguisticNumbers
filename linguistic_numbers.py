@@ -13,7 +13,7 @@ def number_to_english(number, multiplier_names={
         24: "septillion",
         27: "octillion",
         30: "nonillion",
-    }, tens=[
+    }, hundred="hundred", tens=[
         "",
         "",
         "twenty",
@@ -45,12 +45,12 @@ def number_to_english(number, multiplier_names={
         "seventeen",
         "eighteen",
         "nineteen",
-    ]):
+    ], negative="negative"):
     if number == 0:
-        return "zero"
+        return singles[0]
 
     if number < 0:
-        return "negative " + number_to_english(-number)
+        return negative + " " + number_to_english(-number)
 
 
     output = []
@@ -65,7 +65,7 @@ def number_to_english(number, multiplier_names={
 
     if number >= 100:
         sub_number = int(number / 100)
-        output.append(number_to_english(sub_number) + " " + "hundred")
+        output.append(number_to_english(sub_number) + " " + hundred)
         number -= sub_number * 100
 
     partial = ""
@@ -86,5 +86,9 @@ def number_to_english(number, multiplier_names={
 def number_to_base(number, base=10, sub_call=number_to_english, sep=" ", *args, **kwargs):
     return sep.join(sub_call(int(number / (base ** i)) % base, *args, **kwargs) for i in xrange(int(log(number, base)), -1, -1))
 
-def number_to_primes(number, sub_call=number_to_english, sep=" times ", *args, **kwargs):
-    return sep.join(sub_call(x, *args, **kwargs) + ({1: "", 2: " squared", 3: " cubed"}.get(p, " to the power of " + sub_call(p, *args, **kwargs))) for x, p in factorize(number))
+def number_to_primes(number, power_formats={
+        1: "{0}",
+        2: "{0} squared",
+        3: "{0} cubed",
+    }, power_default="{0} to the power of {1}", sub_call=number_to_english, sep=" times ", *args, **kwargs):
+    return sep.join(power_formats.get(p, power_default).format(sub_call(x, *args, **kwargs), sub_call(p, *args, **kwargs)) for x, p in factorize(number))
